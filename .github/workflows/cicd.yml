@@ -68,6 +68,3 @@ jobs:
 
     - name: Verify deployment
       run: kubectl get pods
-    steps:
-      - name: Simulate Kubernetes deployment
-        run: echo "Deploying Docker image to Kubernetes cluster"
