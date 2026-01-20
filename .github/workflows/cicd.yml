@@ -45,9 +45,29 @@ jobs:
         run: docker build -t hello-k8s-cicd .
 
   deploy:
-    needs: docker-build
-    runs-on: ubuntu-latest
+  needs: docker-build
+  runs-on: ubuntu-latest
 
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create Kubernetes cluster (kind)
+      uses: helm/kind-action@v1
+
+    - name: Build Docker image for kind
+      run: docker build -t hello-k8s-cicd:latest .
+
+    - name: Load image into kind cluster
+      run: kind load docker-image hello-k8s-cicd:latest
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+
+    - name: Verify deployment
+      run: kubectl get pods
     steps:
       - name: Simulate Kubernetes deployment
         run: echo "Deploying Docker image to Kubernetes cluster"
