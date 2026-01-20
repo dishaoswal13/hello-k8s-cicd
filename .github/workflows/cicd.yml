@@ -54,12 +54,14 @@ jobs:
 
       - name: Create Kubernetes cluster (kind)
         uses: helm/kind-action@v1
+        with:
+          cluster_name: kind
 
       - name: Build Docker image for kind
         run: docker build -t hello-k8s-cicd:latest .
 
       - name: Load image into kind cluster
-        run: kind load docker-image hello-k8s-cicd:latest
+        run: kind load docker-image hello-k8s-cicd:latest --name kind
 
       - name: Deploy to Kubernetes
         run: |
