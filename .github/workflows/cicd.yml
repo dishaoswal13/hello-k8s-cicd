@@ -1,0 +1,53 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: |
+            package.json
+            package-lock.json
+            app.js
+
+  docker-build:
+    needs: build-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t hello-k8s-cicd .
+
+  deploy:
+    needs: docker-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Simulate Kubernetes deployment
+        run: echo "Deploying Docker image to Kubernetes cluster"
