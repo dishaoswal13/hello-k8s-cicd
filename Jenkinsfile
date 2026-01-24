@@ -1,17 +1,17 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t hello-k8s:1.0 .'
-      }
-    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
-    stage('Deploy to Kubernetes') {
-      steps {
-        sh 'kubectl apply -f k8s/'
-      }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t hello-k8s:1.0 .'
+            }
+        }
     }
-  }
 }
